@@ -1,0 +1,18 @@
+{
+   "customerOrder": "CustomerOrder",
+   "forecast2Message":"forecast2Message",
+   "inventoryOnHand2DeltaMessage": "inventoryOnHand2DeltaMessage",
+   "inventoryOnHand2Message": "inventoryOnHand2Message",
+   "inventoryTransaction2DeltaMessage": "inventoryTransaction2DeltaMessage",
+   "inventoryTransaction2Message": "inventoryTransaction2Message",
+   "itemLocationEffectiveInventoryParametersMessage": "itemLocationEffectiveInventoryParametersMessage",
+   "itemLocationMessage": "itemLocationMessage",
+   "itemMessage": "itemMessage",
+   "locationMessage": "locationMessage",
+   "locationMessageCapacity": "locationMessageCapacity",
+   "party": "partyMessage",
+   "purchaseOrder": "PurchaseOrder",
+   "transferOrder" : "TransferOrder",
+   "transportChain": "transportChainMessage",
+   "transportInstruction": "transportInstructionMessage"
+}

@@ -1,0 +1,11 @@
+{
+  "details": [{
+    "IngestToMessageBrokerDetails": "IngestToMessageBrokerDetails.xlsx",
+    "LCTAdapterDetails": "LCTAdapterDetails.xlsx"
+  }],
+  "summary": [{
+    "IngestToMessageBrokerSummary": "IngestToMessageBrokerSummary.xlsx",
+    "LCTAdapterSummary": "LCTAdapterSummary.xlsx"
+  }]
+
+}

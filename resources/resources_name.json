@@ -1,0 +1,11 @@
+{
+  "db_file_name": "data_base_credentials.json",
+  "excel_file_name_message_brokerDetails": "\\IngestToMessageBrokerDetails.xlsx",
+  "excel_file_name_message_brokerSummary": "\\IngestToMessageBrokerSummary.xlsx",
+  "excel_file_name_adapter_Detail": "\\LCTAdapterDetails.xlsx",
+  "excel_file_name_adapter_Summary": "\\LCTAdapterSummary.xlsx",
+  "excel_file_name_computation_start": "\\ComputationStart.xlsx",
+  "excel_file_name_computation_finish": "\\ComputationFinish.xlsx",
+  "excel_file_name_computation_metrics": "\\ComputationMetrics.xlsx",
+  "excel_file_name_computation": "\\Computation.xlsx"
+}
