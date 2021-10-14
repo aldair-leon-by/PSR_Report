@@ -1,10 +1,9 @@
 import os
-import numpy as np
 from message import message_type_name
 from env_config import get_root_directory_folder_excel_data, get_details_name, get_summary_name, \
     get_root_directory_folder_name, get_root_directory_file_name
 import pandas as pd
-from datetime import date, datetime
+from datetime import datetime
 from init_logger import log
 
 logger = log('JOIN FILE')
@@ -156,7 +155,7 @@ class JoinFiles:
             os.mkdir(path_detail, 0o666)
         self.report_name = datetime.strptime(str(directory_FileName), '%Y-%m-%d %H:%M:%S.%f').strftime('h%H_m%M_s'
                                                                                                        '%S_ms%f')
-        exel_file_name_details = 'DetailReport - '+self.report_name+'.xlsx'
+        exel_file_name_details = 'DetailReport - ' + self.report_name + '.xlsx'
         with pd.ExcelWriter(path_detail + '\\' + exel_file_name_details) as write:
             self.e2eIngestionComputation.fillna('NaN', inplace=True)
             self.e2eIngestionComputation[
@@ -222,7 +221,22 @@ class JoinFiles:
             on=["TYPE_OF_MESSAGE_INGEST"],
             how="left")
         logger.info('JOIN SUMMARY REPORT !!')
-        return self.e2eIngestionSummary
+
+    def exel_to_data_frama_Summary_computation(self):
+        self.ComputationSummary = self.e2eIngestionComputation.groupby(['TYPE_OF_MESSAGE', 'COMPUTATION_STATUS']) \
+            .agg(COMPUTATION_STARTED=('COMPUTATION_STARTED', 'min'),
+                 COMPUTATION_FINISHED=('COMPUTATION_FINISHED', 'max'),
+                 TOTAL_OF_MESSAGE=('COMPUTATION_STATUS', 'count')).reset_index()
+
+    def exel_to_data_frama_Summary_e2e(self):
+        self.e2eIngestionComputationSummary = self.e2eIngestionSummary[
+            ['TOTAL_OF_MESSAGE', 'TYPE_OF_MESSAGE_INGEST', 'TYPE_OF_MESSAGE', 'CRNT_STATUS',
+             'INGESTION_SERVICE_MESSAGE_STARTED',
+             'INGESTION_SERVICE_MESSAGE_FINISHED', 'MESSAGE_BROKER_STARTED', 'MESSAGE_BROKER_FINISHED']].merge(
+            self.ComputationSummary[
+                ['TYPE_OF_MESSAGE', 'COMPUTATION_STATUS', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED',
+                 'TOTAL_OF_MESSAGE']],
+            on=['TOTAL_OF_MESSAGE', 'TYPE_OF_MESSAGE'])
 
     def creat_excel_file_summary(self):
         path = os.path.join(self.report_folder, self.folder_name)
@@ -231,10 +245,6 @@ class JoinFiles:
             os.mkdir(path, 0o666)
         if not os.path.exists(path_summary):
             os.mkdir(path_summary, 0o666)
-        exel_file_name_summary = 'SummaryReport - '+self.report_name + '.xlsx'
-        with pd.ExcelWriter(path_summary + '\\' + exel_file_name_summary) as write:
-            self.e2eIngestionSummary.to_excel(write, index=False, sheet_name='SummaryIngestion')
-            self.e2eIngestionComputation[['TYPE_OF_MESSAGE', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED',
-                                          'COMPUTATION_STATUS']]. \
-                to_excel(write, index=False, sheet_name='SummaryComputation')
-            logger.info('EXCEL FILE SUMMARY REPORT path -> ' + path_summary + '\\' + exel_file_name_summary)
+        exel_file_name_summary = 'SummaryReport - ' + self.report_name + '.xlsx'
+        self.e2eIngestionComputationSummary.to_excel(path_summary + '\\' + exel_file_name_summary, index=False)
+        logger.info('EXCEL FILE SUMMARY REPORT path -> ' + path_summary + '\\' + exel_file_name_summary)

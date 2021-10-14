@@ -26,10 +26,15 @@ x.sql_query_message_Summary()
 x.sql_query_adapter_Detail()
 x.sql_query_adapter_Summary()
 x.sql_to_mysql()
+
 y.excel_message_type_update()
+
 y.exel_to_data_frama_Details()
 y.exel_to_data_frama_Details_computation()
 y.exel_to_data_frama_Details_e2e()
 y.creat_excel_file_details()
+
 y.exel_to_data_frame_Summary()
+y.exel_to_data_frama_Summary_computation()
+y.exel_to_data_frama_Summary_e2e()
 y.creat_excel_file_summary()
