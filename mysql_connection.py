@@ -5,7 +5,7 @@ from env_config import get_root_directory_db
 logger = log('MYSQL CONNECTION')
 
 
-# MYSQL information sit and uat
+# MYSQL information sit , uat, prod
 def mysql_envs_descriptions() -> json:
     path_file_mysql = get_root_directory_db()
     with open(path_file_mysql) as f:

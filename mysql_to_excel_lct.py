@@ -7,13 +7,15 @@ from init_logger import log
 logger = log('MYSQL QUERY')
 
 
-class CsvCreationMysql:
+class ExcelCreationMysql:
+    # Constructor
     def __init__(self, env, excel_file_ingestion, path, excel_file_name):
         self.env = env
         self.excel_file_ingestion = excel_file_ingestion
         self.path = path
         self.excel_file_name = excel_file_name
 
+    # MySQL connection
     def mysql_connection(self):
         env = mysql_credentials()
         mysql_server = env['my' + self.env][0]['mysql_server']
@@ -35,6 +37,7 @@ class CsvCreationMysql:
         else:
             logger.info('Successfully connection MYSQL my' + self.env + '!')
 
+    # Computation time start to finish in every ingestion_id
     def mysql_query_computation_time(self):
         self.df = pd.read_excel(self.excel_file_ingestion)
         self.ingestion_id = list(self.df['INGESTION_ID'])
@@ -46,6 +49,7 @@ class CsvCreationMysql:
                       "GROUP BY ingestion_id" % self.format_strings
 
         try:
+            logger.info('Executing query... MySQL stack DB')
             mysql_query = pd.read_sql(query_start, con=self.cnx, params=tuple(self.ingestion_id))
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -66,6 +70,7 @@ class CsvCreationMysql:
                        "GROUP BY ingestion_id" % self.format_strings
 
         try:
+            logger.info('Executing query... MySQL stack DB')
             mysql_query = pd.read_sql(query_finish, con=self.cnx, params=tuple(self.ingestion_id))
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -78,6 +83,7 @@ class CsvCreationMysql:
         logger.info('Excel created successfully location --> {0}'.format(
             self.path + self.excel_file_name['excel_file_name_computation_finish']))
 
+    # Computation performance metrics... this is not finished yet
     def mysql_query_computation_performance(self):
 
         query = "SELECT max(event_time) AS COMPUTATION_FINISHED, ingestion_id as INGESTION_ID, status AS COMPUTATION_STATUS, " \
@@ -127,6 +133,7 @@ class CsvCreationMysql:
                 "AND performance_metrics != 'NULL' " \
                 "group by ingestion_id,performance_metrics,status;" % self.format_strings
         try:
+            logger.info('Executing query... MySQL stack DB')
             mysql_query = pd.read_sql(query, con=self.cnx, params=tuple(self.ingestion_id))
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:

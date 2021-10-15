@@ -25,6 +25,7 @@ class JoinFiles:
         logger.info('Message Update Finished !!')
 
     def exel_to_data_frama_Details(self):
+        self.path = get_root_directory_folder_excel_data()
         detail = get_details_name()
         ingestToMB = pd.read_excel(self.path + "\/" + detail[0])
         lctAdapter = pd.read_excel(self.path + "\/" + detail[1])
@@ -91,6 +92,7 @@ class JoinFiles:
                                 ]],
             on=["INGESTION_ID", "COMPUTATION_FINISHED"],
             how="left")
+        logger.info('JOIN DETAILS COMPUTATION METRICS REPORT !!')
 
     def exel_to_data_frama_Details_e2e(self):
         self.e2eIngestionComputation = self.e2eIngestionDetails[
@@ -141,21 +143,32 @@ class JoinFiles:
                                         ]],
             on=['INGESTION_ID'],
             how="left")
+        logger.info('JOIN DETAILS INGESTION TO COMPUTATION METRICS REPORT !!')
 
     def creat_excel_file_details(self):
-        format_time = self.e2eIngestionComputation['INGESTION_SERVICE_MESSAGE_STARTED'][0]
-        directory_FileName = format_time.to_pydatetime()
-        self.folder_name = datetime.strptime(str(directory_FileName), '%Y-%m-%d %H:%M:%S.%f').strftime('%B-%d-%Y')
+        format_time_start = self.e2eIngestionComputation['INGESTION_SERVICE_MESSAGE_STARTED'][0]
+        format_time_finish = self.e2eIngestionComputation['INGESTION_SERVICE_MESSAGE_STARTED'].iloc[-1]
+        directory_FileName_start = format_time_start.to_pydatetime()
+        directory_FileName_finish = format_time_finish.to_pydatetime()
+        self.folder_name_start = datetime.strptime(str(directory_FileName_start), '%Y-%m-%d %H:%M:%S.%f').strftime(
+            '%B-%d-%Y')
+        self.folder_name_finish = datetime.strptime(str(directory_FileName_finish), '%Y-%m-%d %H:%M:%S.%f').strftime(
+            '%B-%d-%Y')
         self.report_folder = get_root_directory_folder_name()
-        path = os.path.join(self.report_folder, self.folder_name)
+        self.completeFoldernama = 'From -' + self.folder_name_start + ' To - ' + self.folder_name_finish
+        path = os.path.join(self.report_folder,self.completeFoldernama)
         path_detail = os.path.join(path, 'DetailReport')
         if not os.path.exists(path):
             os.mkdir(path, 0o666)
         if not os.path.exists(path_detail):
             os.mkdir(path_detail, 0o666)
-        self.report_name = datetime.strptime(str(directory_FileName), '%Y-%m-%d %H:%M:%S.%f').strftime('h%H_m%M_s'
-                                                                                                       '%S_ms%f')
-        exel_file_name_details = 'DetailReport - ' + self.report_name + '.xlsx'
+        self.report_name_start = datetime.strptime(str(directory_FileName_start), '%Y-%m-%d %H:%M:%S.%f') \
+            .strftime('h%H_m%M_s%S_ms%f')
+        self.reprt_name_finish = datetime.strptime(str(directory_FileName_finish), '%Y-%m-%d %H:%M:%S.%f') \
+            .strftime('h%H_m%M_s%S_ms%f')
+
+        exel_file_name_details = 'DetailReport From- ' + self.report_name_start + ' To- ' + \
+                                 self.reprt_name_finish + '.xlsx'
         with pd.ExcelWriter(path_detail + '\\' + exel_file_name_details) as write:
             self.e2eIngestionComputation.fillna('NaN', inplace=True)
             self.e2eIngestionComputation[
@@ -222,29 +235,28 @@ class JoinFiles:
             how="left")
         logger.info('JOIN SUMMARY REPORT !!')
 
-    def exel_to_data_frama_Summary_computation(self):
-        self.ComputationSummary = self.e2eIngestionComputation.groupby(['TYPE_OF_MESSAGE', 'COMPUTATION_STATUS']) \
-            .agg(COMPUTATION_STARTED=('COMPUTATION_STARTED', 'min'),
-                 COMPUTATION_FINISHED=('COMPUTATION_FINISHED', 'max'),
-                 TOTAL_OF_MESSAGE=('COMPUTATION_STATUS', 'count')).reset_index()
-
     def exel_to_data_frama_Summary_e2e(self):
-        self.e2eIngestionComputationSummary = self.e2eIngestionSummary[
-            ['TOTAL_OF_MESSAGE', 'TYPE_OF_MESSAGE_INGEST', 'TYPE_OF_MESSAGE', 'CRNT_STATUS',
-             'INGESTION_SERVICE_MESSAGE_STARTED',
-             'INGESTION_SERVICE_MESSAGE_FINISHED', 'MESSAGE_BROKER_STARTED', 'MESSAGE_BROKER_FINISHED']].merge(
-            self.ComputationSummary[
-                ['TYPE_OF_MESSAGE', 'COMPUTATION_STATUS', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED',
-                 'TOTAL_OF_MESSAGE']],
-            on=['TOTAL_OF_MESSAGE', 'TYPE_OF_MESSAGE'])
+        self.e2eIngestionComputationSummary = self.e2eIngestionComputation.groupby(
+            ['TYPE_OF_MESSAGE', 'COMPUTATION_STATUS','MSG_STATUS']) \
+            .agg(TOTAL_OF_MESSAGE=('COMPUTATION_STATUS', 'count'),
+                 INGESTION_SERVICE_MESSAGE_STARTED=('INGESTION_SERVICE_MESSAGE_STARTED', 'min'),
+                 INGESTION_SERVICE_MESSAGE_FINISHED=('INGESTION_SERVICE_MESSAGE_FINISHED', 'max'),
+                 MESSAGE_BROKER_STARTED=('MESSAGE_BROKER_STARTED', 'min'),
+                 MESSAGE_BROKER_FINISHED=('MESSAGE_BROKER_FINISHED', 'max'),
+                 LCT_ADAPTER_STARTED=('LCT_ADAPTER_STARTED', 'min'),
+                 LCT_ADAPTER_FINISHED=('LCT_ADAPTER_FINISHED', 'max'),
+                 COMPUTATION_STARTED=('COMPUTATION_STARTED', 'min'),
+                 COMPUTATION_FINISHED=('COMPUTATION_FINISHED', 'max')).reset_index()
+        logger.info('JOIN SUMMARY INGESTION TO COMPUTATION !!')
 
     def creat_excel_file_summary(self):
-        path = os.path.join(self.report_folder, self.folder_name)
+        path = os.path.join(self.report_folder,self.completeFoldernama)
         path_summary = os.path.join(path, 'SummaryReport')
         if not os.path.exists(path):
             os.mkdir(path, 0o666)
         if not os.path.exists(path_summary):
             os.mkdir(path_summary, 0o666)
-        exel_file_name_summary = 'SummaryReport - ' + self.report_name + '.xlsx'
+        exel_file_name_summary = 'SummaryReport - From- ' + self.report_name_start + ' To- ' + \
+                                 self.reprt_name_finish + '.xlsx'
         self.e2eIngestionComputationSummary.to_excel(path_summary + '\\' + exel_file_name_summary, index=False)
         logger.info('EXCEL FILE SUMMARY REPORT path -> ' + path_summary + '\\' + exel_file_name_summary)

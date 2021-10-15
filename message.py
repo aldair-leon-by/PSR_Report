@@ -5,7 +5,8 @@ from init_logger import log
 logger = log('MESSAGE TRANSFORM')
 
 
-def message_type_name():
+# Transform messageType
+def message_type_name() -> list:
     path = get_root_directory_folder_excel_data()
     summary = get_summary_name()
     ingestToMB = pd.read_excel(path + "\/" + summary[0])

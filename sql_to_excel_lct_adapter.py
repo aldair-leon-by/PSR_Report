@@ -3,16 +3,16 @@ import pandas as pd
 from init_logger import log
 from datetime import datetime
 from sql_connection import sql_credentials
-from mysql_to_excel_lct import CsvCreationMysql
+from mysql_to_excel_lct import ExcelCreationMysql
 from env_config import get_root_directory_excel, get_root_directory_file_name
 
 # Logger
 logger = log('SQL QUERY')
 
 
-# This class request of date start and date finish in this format YY/MM/DD HH:MM:SS.FFF
+# This class request of date start and date finish in format YY/MM/DD HH:MM:SS.FFF
 class CsvCreation:
-
+    # Constructor
     def __init__(self, date_time_start, date_time_finish, env):
         self.format_time = 'mm.ss.ff'
         self.date_time_start = date_time_start
@@ -21,7 +21,7 @@ class CsvCreation:
         self.start_time = datetime.strptime(self.date_time_start, '%y/%m/%d %H:%M:%S.%f')
         self.finish_time = datetime.strptime(self.date_time_finish, '%y/%m/%d %H:%M:%S.%f')
 
-    # SQL connection env
+    # SQL connection message_store db
     def sql_connection_message(self) -> object:
         env = sql_credentials()
         sql_server = env[self.env][0]['sql_server']
@@ -36,6 +36,7 @@ class CsvCreation:
         except pyodbc.Error as ex:
             logger.error(ex)
 
+    # SQL connection LCT_adapter db
     def sql_connection_adapter(self) -> object:
         env = sql_credentials()
         sql_server = env[self.env][0]['sql_server']
@@ -50,6 +51,7 @@ class CsvCreation:
         except pyodbc.Error as ex:
             logger.error(ex)
 
+    # SQL Query Ingest Service to Message Broker line by line
     def sql_query_message_Detail(self):
         self.excel_file_name = get_root_directory_file_name()
         # Query to execute
@@ -90,6 +92,7 @@ class CsvCreation:
                 'ingestService_to_MessageBroker.CRNT_STATUS ' \
                 'ORDER BY ingestService_to_MessageBroker.INGESTION_SERVICE_MESSAGE_STARTED'
         try:
+            logger.info('Executing query... Message Store DB')
             sql_query = pd.read_sql_query(query, params=(
                 '%', '%', 'Received', '%BYDM%', self.start_time, self.finish_time, 'Processed'),
                                           con=self.connection_message)
@@ -101,6 +104,7 @@ class CsvCreation:
             'Excel created successfully location --> {0}'.format(
                 self.path + self.excel_file_name['excel_file_name_message_brokerDetails']))
 
+    # SQL Query Ingest Service to Message Broker summary of all ingestion
     def sql_query_message_Summary(self):
 
         query = 'WITH ingestService_to_MessageBroker_Total AS (' \
@@ -142,6 +146,7 @@ class CsvCreation:
         logger.info('Excel created successfully location --> {0}'.format(
             self.path + self.excel_file_name['excel_file_name_message_brokerSummary']))
 
+    # SQL Query LCT Adapter line bby line
     def sql_query_adapter_Detail(self):
         query = 'SELECT AUDIT_TBL.MSG_TYPE,' \
                 'AUDIT_TBL.MSG_INGEST_PARAM,' \
@@ -156,6 +161,7 @@ class CsvCreation:
                 'AND JSON_Value(GS1_header, ?) != ? WHERE DATA_TBL.CREATED_DATETIME  > ? ' \
                 'AND DATA_TBL.CREATED_DATETIME <  ? ORDER BY AUDIT_TBL.MODIFIED_DATETIME ASC;'
         try:
+            logger.info('Executing query... LCT Adapter DB')
             sql_query = pd.read_sql_query(query, params=(
                 '$.messageId', '$.messageId', 'NULL', self.start_time, self.finish_time),
                                           con=self.connection_adapter)
@@ -166,6 +172,7 @@ class CsvCreation:
         logger.info('Excel created successfully location --> {0}'.format(
             self.path + self.excel_file_name['excel_file_name_adapter_Detail']))
 
+    # SQL Query LCT Adapter summary of all ingestion
     def sql_query_adapter_Summary(self):
         query = 'SELECT count(AUDIT_TBL.MSG_STATUS) AS NUMBER_OF_MESSAGES, ' \
                 'AUDIT_TBL.MSG_TYPE AS TYPE_OF_MESSAGE_INGEST, ' \
@@ -187,8 +194,10 @@ class CsvCreation:
         logger.info('Excel created successfully location --> {0}'.format(
             self.path + self.excel_file_name['excel_file_name_adapter_Summary']))
 
+    # MySQL functions
     def sql_to_mysql(self):
-        mysql = CsvCreationMysql(self.env, self.excel_file_ingestion, self.path, self.excel_file_name)
+        logger.info('MYSQL Process start')
+        mysql = ExcelCreationMysql(self.env, self.excel_file_ingestion, self.path, self.excel_file_name)
         mysql.mysql_connection()
         mysql.mysql_query_computation_time()
         mysql.mysql_query_computation_performance()
