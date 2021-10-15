@@ -11,9 +11,8 @@ logger = log('JOIN FILE')
 
 class JoinFiles:
 
-    def __init__(self, detail_file, summary_file):
-        self.detail_file = detail_file
-        self.summary_file = summary_file
+    def __init__(self):
+        self.file = None
 
     def excel_message_type_update(self):
         self.path = get_root_directory_folder_excel_data()
@@ -155,7 +154,7 @@ class JoinFiles:
         self.folder_name_finish = datetime.strptime(str(directory_FileName_finish), '%Y-%m-%d %H:%M:%S.%f').strftime(
             '%B-%d-%Y')
         self.report_folder = get_root_directory_folder_name()
-        self.completeFoldernama = 'From -' + self.folder_name_start + ' To - ' + self.folder_name_finish
+        self.completeFoldernama = 'From- ' + self.folder_name_start + ' To- ' + self.folder_name_finish
         path = os.path.join(self.report_folder,self.completeFoldernama)
         path_detail = os.path.join(path, 'DetailReport')
         if not os.path.exists(path):
@@ -163,9 +162,9 @@ class JoinFiles:
         if not os.path.exists(path_detail):
             os.mkdir(path_detail, 0o666)
         self.report_name_start = datetime.strptime(str(directory_FileName_start), '%Y-%m-%d %H:%M:%S.%f') \
-            .strftime('h%H_m%M_s%S_ms%f')
+            .strftime('h%Hm%Ms%Sms%f')
         self.reprt_name_finish = datetime.strptime(str(directory_FileName_finish), '%Y-%m-%d %H:%M:%S.%f') \
-            .strftime('h%H_m%M_s%S_ms%f')
+            .strftime('h%Hm%Ms%Sms%f')
 
         exel_file_name_details = 'DetailReport From- ' + self.report_name_start + ' To- ' + \
                                  self.reprt_name_finish + '.xlsx'

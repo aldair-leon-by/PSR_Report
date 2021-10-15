@@ -13,11 +13,11 @@ This code convert SQL data into CSV file from SW Connect DB
 
 
 date_start = '21/09/28 15:00:00.000'
-date_finish = '21/09/28 16:00:00.000'
+date_finish = '21/09/28 15:10:00.000'
 env = 'sql_db_prod'
 
 x = CsvCreation(date_start, date_finish, env)
-y = JoinFiles('details', 'summary')
+y = JoinFiles()
 
 x.sql_connection_message()
 x.sql_connection_adapter()

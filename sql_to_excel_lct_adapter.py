@@ -104,7 +104,8 @@ class CsvCreation:
             'Excel created successfully location --> {0}'.format(
                 self.path + self.excel_file_name['excel_file_name_message_brokerDetails']))
 
-    # SQL Query Ingest Service to Message Broker summary of all ingestion
+    # SQL Query Ingest Service to Message Broker summary of all ingestion this query is inactive
+    '''
     def sql_query_message_Summary(self):
 
         query = 'WITH ingestService_to_MessageBroker_Total AS (' \
@@ -145,8 +146,9 @@ class CsvCreation:
         sql_query.to_excel(self.path + self.excel_file_name['excel_file_name_message_brokerSummary'], index=False)
         logger.info('Excel created successfully location --> {0}'.format(
             self.path + self.excel_file_name['excel_file_name_message_brokerSummary']))
+    '''
 
-    # SQL Query LCT Adapter line bby line
+    # SQL Query LCT Adapter line by line
     def sql_query_adapter_Detail(self):
         query = 'SELECT AUDIT_TBL.MSG_TYPE,' \
                 'AUDIT_TBL.MSG_INGEST_PARAM,' \
@@ -172,7 +174,8 @@ class CsvCreation:
         logger.info('Excel created successfully location --> {0}'.format(
             self.path + self.excel_file_name['excel_file_name_adapter_Detail']))
 
-    # SQL Query LCT Adapter summary of all ingestion
+    # SQL Query LCT Adapter summary of all ingestion this query is inactive
+    '''
     def sql_query_adapter_Summary(self):
         query = 'SELECT count(AUDIT_TBL.MSG_STATUS) AS NUMBER_OF_MESSAGES, ' \
                 'AUDIT_TBL.MSG_TYPE AS TYPE_OF_MESSAGE_INGEST, ' \
@@ -193,6 +196,7 @@ class CsvCreation:
         sql_query.to_excel(self.path + self.excel_file_name['excel_file_name_adapter_Summary'], index=False)
         logger.info('Excel created successfully location --> {0}'.format(
             self.path + self.excel_file_name['excel_file_name_adapter_Summary']))
+    '''
 
     # MySQL functions
     def sql_to_mysql(self):
