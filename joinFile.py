@@ -257,5 +257,6 @@ class JoinFiles:
             os.mkdir(path_summary, 0o666)
         exel_file_name_summary = 'SummaryReport - From- ' + self.report_name_start + ' To- ' + \
                                  self.reprt_name_finish + '.xlsx'
+        self.e2eIngestionComputationSummary.fillna('NaN', inplace=True)
         self.e2eIngestionComputationSummary.to_excel(path_summary + '\\' + exel_file_name_summary, index=False)
         logger.info('EXCEL FILE SUMMARY REPORT path -> ' + path_summary + '\\' + exel_file_name_summary)
