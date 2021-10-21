@@ -46,7 +46,7 @@ class ExcelCreationMysql:
                       "FROM stack_db.event WHERE ingestion_id IN (%s) " \
                       "AND status IN ('ACCEPTING') " \
                       "AND service IN ('computation') " \
-                      "GROUP BY ingestion_id" % self.format_strings
+                      "GROUP BY ingestion_id " % self.format_strings
 
         try:
             logger.info('Executing query... MySQL stack DB')
@@ -66,7 +66,7 @@ class ExcelCreationMysql:
                        "FROM stack_db.event WHERE ingestion_id IN (%s) " \
                        "AND status IN ('COMPLETED','COMPLETED_WITH_TIMEOUT') " \
                        "AND service IN ('computation') " \
-                       "AND performance_metrics != 'NULL'" \
+                       "AND performance_metrics != 'NULL' " \
                        "GROUP BY ingestion_id" % self.format_strings
 
         try:
@@ -87,14 +87,14 @@ class ExcelCreationMysql:
     def mysql_query_computation_performance(self):
 
         query = "SELECT max(event_time) AS COMPUTATION_FINISHED, ingestion_id as INGESTION_ID, status AS COMPUTATION_STATUS, " \
-                "json_extract(performance_metrics,'$.summary.overall.totalCpuTimeMs') AS OVERALL_totalCpuTimeMs, " \
-                "json_extract(performance_metrics,'$.summary.overall.averageCpuTimeMs') AS OVERALL_averageCpuTimeMs, " \
-                "json_extract(performance_metrics,'$.summary.overall.performanceStatus') AS OVERALL_performanceStatus, " \
-                "json_extract(performance_metrics,'$.summary.overall.totalInvocationCount') AS OVERALL_totalInvocationCount, " \
-                "json_extract(performance_metrics,'$.summary.overall.currentInvocationCount') AS OVERALL_currentInvocationCount, " \
-                "json_extract(performance_metrics,'$.summary.overall.invocationPerObjectRatio') AS OVERALL_invocationPerObjectRatio, " \
-                "json_extract(performance_metrics,'$.summary.overall.totalSourcingObjectCount') AS OVERALL_totalSourcingObjectCount, " \
-                "json_extract(performance_metrics,'$.summary.overall.totalProcessedObjectCount') AS OVERALL_totalProcessedObjectCount, " \
+                "json_extract(performance_metrics,'$.summary.overall.totalCpuTimeMs') AS totalCpuTimeMs, " \
+                "json_extract(performance_metrics,'$.summary.overall.averageCpuTimeMs') AS averageCpuTimeMs, " \
+                "json_extract(performance_metrics,'$.summary.overall.performanceStatus') AS performanceStatus, " \
+                "json_extract(performance_metrics,'$.summary.overall.totalInvocationCount') AS totalInvocationCount, " \
+                "json_extract(performance_metrics,'$.summary.overall.currentInvocationCount') AS currentInvocationCount, " \
+                "json_extract(performance_metrics,'$.summary.overall.invocationPerObjectRatio') AS invocationPerObjectRatio, " \
+                "json_extract(performance_metrics,'$.summary.overall.totalSourcingObjectCount') AS totalSourcingObjectCount, " \
+                "json_extract(performance_metrics,'$.summary.overall.totalProcessedObjectCount') AS totalProcessedObjectCount, " \
                 "json_extract(performance_metrics,'$.summary.Order.totalCpuTimeMs') AS ORDER_totalCpuTimeMs, " \
                 "json_extract(performance_metrics,'$.summary.Order.averageCpuTimeMs') AS Order_averageCpuTimeMs, " \
                 "json_extract(performance_metrics,'$.summary.Order.performanceStatus') AS Order_performanceStatus, " \

@@ -12,8 +12,8 @@ This code convert SQL data into CSV file from SW Connect DB
 # env "sql_db_uat or sql_db_sit"
 
 
-date_start = '21/09/28 15:00:00.000'
-date_finish = '21/09/28 15:10:00.000'
+date_start = '21/10/20 01:00:00.000'
+date_finish = '21/10/20 02:00:00.000'
 env = 'sql_db_prod'
 
 x = CsvCreation(date_start, date_finish, env)
@@ -30,6 +30,7 @@ x.sql_to_mysql()
 y.exel_to_data_frama_Details()
 y.exel_to_data_frama_Details_computation()
 y.exel_to_data_frama_Details_e2e()
+y.excel_Details_calculations()
 y.creat_excel_file_details()
 
 # y.exel_to_data_frame_Summary()

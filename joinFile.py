@@ -49,45 +49,14 @@ class JoinFiles:
         self.e2eComputationDetails = self.e2eComputationDetails[
             ['INGESTION_ID', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED']].merge(
             computationMetrics[['COMPUTATION_FINISHED', 'INGESTION_ID',
-                                'COMPUTATION_STATUS', 'OVERALL_totalCpuTimeMs',
-                                'OVERALL_averageCpuTimeMs',
-                                'OVERALL_performanceStatus',
-                                'OVERALL_totalInvocationCount',
-                                'OVERALL_currentInvocationCount',
-                                'OVERALL_invocationPerObjectRatio',
-                                'OVERALL_totalSourcingObjectCount',
-                                'OVERALL_totalProcessedObjectCount',
-                                'ORDER_totalCpuTimeMs', 'Order_averageCpuTimeMs',
-                                'Order_performanceStatus',
-                                'ORDER_totalInvocationCount',
-                                'ORDER_currentInvocationCount',
-                                'ORDER_invocationPerObjectRatio',
-                                'ORDER_totalSourcingObjectCount',
-                                'ORDER_totalProcessedObjectCount',
-                                'TRANSPORTATION_totalCpuTimeMs',
-                                'TRANSPORTATION_averageCpuTimeMs',
-                                'TRANSPORTATION_performanceStatus',
-                                'TRANSPORTATION_totalInvocationCount',
-                                'TRANSPORTATION_currentInvocationCount',
-                                'TRANSPORTATION_invocationPerObjectRatio',
-                                'TRANSPORTATION_totalSourcingObjectCount',
-                                'TRANSPORTATION_totalProcessedObjectCount',
-                                'computation_backend_totalCpuTimeMs',
-                                'computation_backend_averageCpuTimeMs',
-                                'computation_backend_performanceStatus',
-                                'computation_backend_totalInvocationCount',
-                                'computation_backend_currentInvocationCount',
-                                'computation_backend_invocationPerObjectRatio',
-                                'computation_backend_totalSourcingObjectCount',
-                                'computation_backend_totalProcessedObjectCount',
-                                'computation_frontend_totalCpuTimeMs',
-                                'computation_frontend_averageCpuTimeMs',
-                                'computation_frontend_performanceStatus',
-                                'computation_frontend_totalInvocationCount',
-                                'computation_frontend_currentInvocationCount',
-                                'computation_frontend_invocationPerObjectRatio',
-                                'computation_frontend_totalSourcingObjectCount',
-                                'computation_frontend_totalProcessedObjectCount'
+                                'COMPUTATION_STATUS', 'totalCpuTimeMs',
+                                'averageCpuTimeMs',
+                                'performanceStatus',
+                                'totalInvocationCount',
+                                'currentInvocationCount',
+                                'invocationPerObjectRatio',
+                                'totalSourcingObjectCount',
+                                'totalProcessedObjectCount'
                                 ]],
             on=["INGESTION_ID", "COMPUTATION_FINISHED"],
             how="left")
@@ -99,50 +68,90 @@ class JoinFiles:
              'INGESTION_SERVICE_MESSAGE_FINISHED', 'MESSAGE_BROKER_STARTED', 'MESSAGE_BROKER_FINISHED',
              'LCT_ADAPTER_STARTED', 'LCT_ADAPTER_FINISHED', 'MSG_STATUS', 'INGESTION_ID']].merge(
             self.e2eComputationDetails[['INGESTION_ID', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED',
-                                        'COMPUTATION_STATUS', 'OVERALL_totalCpuTimeMs',
-                                        'OVERALL_averageCpuTimeMs',
-                                        'OVERALL_performanceStatus',
-                                        'OVERALL_totalInvocationCount',
-                                        'OVERALL_currentInvocationCount',
-                                        'OVERALL_invocationPerObjectRatio',
-                                        'OVERALL_totalSourcingObjectCount',
-                                        'OVERALL_totalProcessedObjectCount',
-                                        'ORDER_totalCpuTimeMs', 'Order_averageCpuTimeMs',
-                                        'Order_performanceStatus',
-                                        'ORDER_totalInvocationCount',
-                                        'ORDER_currentInvocationCount',
-                                        'ORDER_invocationPerObjectRatio',
-                                        'ORDER_totalSourcingObjectCount',
-                                        'ORDER_totalProcessedObjectCount',
-                                        'TRANSPORTATION_totalCpuTimeMs',
-                                        'TRANSPORTATION_averageCpuTimeMs',
-                                        'TRANSPORTATION_performanceStatus',
-                                        'TRANSPORTATION_totalInvocationCount',
-                                        'TRANSPORTATION_currentInvocationCount',
-                                        'TRANSPORTATION_invocationPerObjectRatio',
-                                        'TRANSPORTATION_totalSourcingObjectCount',
-                                        'TRANSPORTATION_totalProcessedObjectCount',
-                                        'computation_backend_totalCpuTimeMs',
-                                        'computation_backend_averageCpuTimeMs',
-                                        'computation_backend_performanceStatus',
-                                        'computation_backend_totalInvocationCount',
-                                        'computation_backend_currentInvocationCount',
-                                        'computation_backend_invocationPerObjectRatio',
-                                        'computation_backend_totalSourcingObjectCount',
-                                        'computation_backend_totalProcessedObjectCount',
-                                        'computation_frontend_totalCpuTimeMs',
-                                        'computation_frontend_averageCpuTimeMs',
-                                        'computation_frontend_performanceStatus',
-                                        'computation_frontend_totalInvocationCount',
-                                        'computation_frontend_currentInvocationCount',
-                                        'computation_frontend_invocationPerObjectRatio',
-                                        'computation_frontend_totalSourcingObjectCount',
-                                        'computation_frontend_totalProcessedObjectCount'
-
+                                        'COMPUTATION_STATUS', 'totalCpuTimeMs',
+                                        'averageCpuTimeMs',
+                                        'performanceStatus',
+                                        'totalInvocationCount',
+                                        'currentInvocationCount',
+                                        'invocationPerObjectRatio',
+                                        'totalSourcingObjectCount',
+                                        'totalProcessedObjectCount'
                                         ]],
             on=['INGESTION_ID'],
             how="left")
         logger.info('JOIN DETAILS INGESTION TO COMPUTATION METRICS REPORT !!')
+
+    def excel_Details_calculations(self):
+        self.e2eIngestionComputation
+        total_time = []
+        for i in range(len(self.e2eIngestionComputation)):
+            adapter = datetime.strptime(str(self.e2eIngestionComputation.iloc[i, 7]), '%Y-%m-%d %H:%M:%S.%f').strftime(
+                '%H:%M:%S.%f')
+            computation = datetime.strptime(str(self.e2eIngestionComputation.iloc[i, 11]),
+                                            '%Y-%m-%d %H:%M:%S.%f').strftime(
+                '%H:%M:%S.%f')
+            if adapter > computation:
+                timeDiff = self.e2eIngestionComputation.iloc[i, 8] - self.e2eIngestionComputation.iloc[i, 3]
+                td = str(timeDiff).split(' ')[-1:][0]
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                    '%H:%M:%S.%f')
+                ftr = [3600, 60, 1]
+                u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
+                total_time.append(u)
+            else:
+                timeDiff = self.e2eIngestionComputation.iloc[i, 11] - self.e2eIngestionComputation.iloc[i, 3]
+                td = str(timeDiff).split(' ')[-1:][0]
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                    '%H:%M:%S.%f')
+                ftr = [3600, 60, 1]
+                u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
+                u = round(u, 2)
+                total_time.append(u)
+        self.e2eIngestionComputation.insert(14, 'TimeDiff', total_time)
+        total_time.clear()
+        for i in range(len(self.e2eIngestionComputation)):
+            timeDiff = self.e2eIngestionComputation.iloc[i, 3] - self.e2eIngestionComputation.iloc[i, 2]
+            td = str(timeDiff).split(' ')[-1:][0]
+            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                '%H:%M:%S.%f')
+            ftr = [3600, 60, 1]
+            u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
+            u = round(u, 2)
+            total_time.append(u)
+        self.e2eIngestionComputation.insert(15, 'INGESTION SERVICE TOTAL TIME', total_time)
+        total_time.clear()
+        for i in range(len(self.e2eIngestionComputation)):
+            timeDiff = self.e2eIngestionComputation.iloc[i, 5] - self.e2eIngestionComputation.iloc[i, 4]
+            td = str(timeDiff).split(' ')[-1:][0]
+            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                '%H:%M:%S.%f')
+            ftr = [3600, 60, 1]
+            u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
+            u = round(u, 2)
+            total_time.append(u)
+        self.e2eIngestionComputation.insert(16, 'MESSAGE BROKER TOTAL TIME', total_time)
+        total_time.clear()
+        for i in range(len(self.e2eIngestionComputation)):
+            timeDiff = self.e2eIngestionComputation.iloc[i, 7] - self.e2eIngestionComputation.iloc[i, 6]
+            td = str(timeDiff).split(' ')[-1:][0]
+            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                '%H:%M:%S.%f')
+            ftr = [3600, 60, 1]
+            u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
+            u = round(u, 2)
+            total_time.append(u)
+        self.e2eIngestionComputation.insert(17, 'LCT ADAPTER TOTAL TIME', total_time)
+        total_time.clear()
+        for i in range(len(self.e2eIngestionComputation)):
+            timeDiff = self.e2eIngestionComputation.iloc[i, 11] - self.e2eIngestionComputation.iloc[i, 10]
+            td = str(timeDiff).split(' ')[-1:][0]
+            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                '%H:%M:%S.%f')
+            ftr = [3600, 60, 1]
+            u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
+            u = round(u, 2)
+            total_time.append(u)
+        self.e2eIngestionComputation.insert(18, 'COMPUTATION TOTAL TIME', total_time)
 
     def creat_excel_file_details(self):
         format_time_start = self.e2eIngestionComputation['INGESTION_SERVICE_MESSAGE_STARTED'][0]
@@ -155,7 +164,7 @@ class JoinFiles:
             '%B-%d-%Y')
         self.report_folder = get_root_directory_folder_name()
         self.completeFoldernama = 'From- ' + self.folder_name_start + ' To- ' + self.folder_name_finish
-        path = os.path.join(self.report_folder,self.completeFoldernama)
+        path = os.path.join(self.report_folder, self.completeFoldernama)
         path_detail = os.path.join(path, 'DetailReport')
         if not os.path.exists(path):
             os.mkdir(path, 0o666)
@@ -172,50 +181,22 @@ class JoinFiles:
             self.e2eIngestionComputation.fillna('NaN', inplace=True)
             self.e2eIngestionComputation[
                 ['INGESTION_ID', 'TYPE_OF_MESSAGE', 'CRNT_STATUS', 'INGESTION_SERVICE_MESSAGE_STARTED',
-                 'INGESTION_SERVICE_MESSAGE_FINISHED',
-                 'MESSAGE_BROKER_STARTED', 'MESSAGE_BROKER_FINISHED', 'LCT_ADAPTER_STARTED', 'LCT_ADAPTER_FINISHED',
-                 'MSG_STATUS', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED', 'COMPUTATION_STATUS']].to_excel(
+                 'INGESTION_SERVICE_MESSAGE_FINISHED', 'INGESTION SERVICE TOTAL TIME',
+                 'MESSAGE_BROKER_STARTED', 'MESSAGE_BROKER_FINISHED', 'MESSAGE BROKER TOTAL TIME',
+                 'LCT_ADAPTER_STARTED', 'LCT_ADAPTER_FINISHED','LCT ADAPTER TOTAL TIME',
+                 'MSG_STATUS', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED', 'COMPUTATION_STATUS',
+                 'COMPUTATION TOTAL TIME',
+                 'totalSourcingObjectCount', 'TimeDiff']].to_excel(
                 write, index=False, sheet_name='DetailReport')
             self.e2eIngestionComputation[
-                ['INGESTION_ID', 'OVERALL_totalCpuTimeMs',
-                 'OVERALL_averageCpuTimeMs',
-                 'OVERALL_performanceStatus',
-                 'OVERALL_totalInvocationCount',
-                 'OVERALL_currentInvocationCount',
-                 'OVERALL_invocationPerObjectRatio',
-                 'OVERALL_totalSourcingObjectCount',
-                 'OVERALL_totalProcessedObjectCount',
-                 'ORDER_totalCpuTimeMs', 'Order_averageCpuTimeMs',
-                 'Order_performanceStatus',
-                 'ORDER_totalInvocationCount',
-                 'ORDER_currentInvocationCount',
-                 'ORDER_invocationPerObjectRatio',
-                 'ORDER_totalSourcingObjectCount',
-                 'ORDER_totalProcessedObjectCount',
-                 'TRANSPORTATION_totalCpuTimeMs',
-                 'TRANSPORTATION_averageCpuTimeMs',
-                 'TRANSPORTATION_performanceStatus',
-                 'TRANSPORTATION_totalInvocationCount',
-                 'TRANSPORTATION_currentInvocationCount',
-                 'TRANSPORTATION_invocationPerObjectRatio',
-                 'TRANSPORTATION_totalSourcingObjectCount',
-                 'TRANSPORTATION_totalProcessedObjectCount',
-                 'computation_backend_totalCpuTimeMs',
-                 'computation_backend_averageCpuTimeMs',
-                 'computation_backend_performanceStatus',
-                 'computation_backend_totalInvocationCount',
-                 'computation_backend_currentInvocationCount',
-                 'computation_backend_invocationPerObjectRatio',
-                 'computation_backend_totalSourcingObjectCount',
-                 'computation_backend_totalProcessedObjectCount',
-                 'computation_frontend_totalCpuTimeMs',
-                 'computation_frontend_averageCpuTimeMs',
-                 'computation_frontend_performanceStatus',
-                 'computation_frontend_totalInvocationCount',
-                 'computation_frontend_currentInvocationCount',
-                 'computation_frontend_invocationPerObjectRatio',
-                 'computation_frontend_totalSourcingObjectCount',
-                 'computation_frontend_totalProcessedObjectCount'
+                ['INGESTION_ID', 'totalCpuTimeMs',
+                 'averageCpuTimeMs',
+                 'performanceStatus',
+                 'totalInvocationCount',
+                 'currentInvocationCount',
+                 'invocationPerObjectRatio',
+                 'totalSourcingObjectCount',
+                 'totalProcessedObjectCount'
                  ]].to_excel(
                 write, index=False, sheet_name='DetailReportComputation')
             logger.info('EXCEL FILE DETAILS REPORT path -> ' + path_detail + '\\' + exel_file_name_details)
@@ -236,8 +217,10 @@ class JoinFiles:
 
     def exel_to_data_frama_Summary_e2e(self):
         self.e2eIngestionComputationSummary = self.e2eIngestionComputation.groupby(
-            ['TYPE_OF_MESSAGE', 'COMPUTATION_STATUS','MSG_STATUS']) \
-            .agg(TOTAL_OF_MESSAGE=('COMPUTATION_STATUS', 'count'),
+            ['TYPE_OF_MESSAGE', 'MSG_STATUS', 'COMPUTATION_STATUS']) \
+            .agg(AVE_TIMEINGESTIONsec=('TimeDiff', 'mean'),
+                 TOTAL_OBJECT_COUNT=('totalSourcingObjectCount', 'sum'),
+                 TOTAL_OF_MESSAGE=('COMPUTATION_STATUS', 'count'),
                  INGESTION_SERVICE_MESSAGE_STARTED=('INGESTION_SERVICE_MESSAGE_STARTED', 'min'),
                  INGESTION_SERVICE_MESSAGE_FINISHED=('INGESTION_SERVICE_MESSAGE_FINISHED', 'max'),
                  MESSAGE_BROKER_STARTED=('MESSAGE_BROKER_STARTED', 'min'),
@@ -245,11 +228,11 @@ class JoinFiles:
                  LCT_ADAPTER_STARTED=('LCT_ADAPTER_STARTED', 'min'),
                  LCT_ADAPTER_FINISHED=('LCT_ADAPTER_FINISHED', 'max'),
                  COMPUTATION_STARTED=('COMPUTATION_STARTED', 'min'),
-                 COMPUTATION_FINISHED=('COMPUTATION_FINISHED', 'max')).reset_index()
+                 COMPUTATION_FINISHED=('COMPUTATION_FINISHED', 'max')).reset_index().round(2)
         logger.info('JOIN SUMMARY INGESTION TO COMPUTATION !!')
 
     def creat_excel_file_summary(self):
-        path = os.path.join(self.report_folder,self.completeFoldernama)
+        path = os.path.join(self.report_folder, self.completeFoldernama)
         path_summary = os.path.join(path, 'SummaryReport')
         if not os.path.exists(path):
             os.mkdir(path, 0o666)
