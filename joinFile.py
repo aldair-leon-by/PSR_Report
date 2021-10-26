@@ -82,7 +82,6 @@ class JoinFiles:
         logger.info('JOIN DETAILS INGESTION TO COMPUTATION METRICS REPORT !!')
 
     def excel_Details_calculations(self):
-        self.e2eIngestionComputation
         total_time = []
         for i in range(len(self.e2eIngestionComputation)):
             adapter = datetime.strptime(str(self.e2eIngestionComputation.iloc[i, 7]), '%Y-%m-%d %H:%M:%S.%f').strftime(
@@ -101,8 +100,16 @@ class JoinFiles:
             else:
                 timeDiff = self.e2eIngestionComputation.iloc[i, 11] - self.e2eIngestionComputation.iloc[i, 3]
                 td = str(timeDiff).split(' ')[-1:][0]
-                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
-                    '%H:%M:%S.%f')
+                try:
+                    timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                        '%H:%M:%S.%f')
+                except:
+                    pass
+                try:
+                    timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S').strftime(
+                        '%H:%M:%S.%f')
+                except:
+                    pass
                 ftr = [3600, 60, 1]
                 u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
                 u = round(u, 2)
@@ -112,8 +119,16 @@ class JoinFiles:
         for i in range(len(self.e2eIngestionComputation)):
             timeDiff = self.e2eIngestionComputation.iloc[i, 3] - self.e2eIngestionComputation.iloc[i, 2]
             td = str(timeDiff).split(' ')[-1:][0]
-            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
-                '%H:%M:%S.%f')
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
             ftr = [3600, 60, 1]
             u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
             u = round(u, 2)
@@ -123,8 +138,16 @@ class JoinFiles:
         for i in range(len(self.e2eIngestionComputation)):
             timeDiff = self.e2eIngestionComputation.iloc[i, 5] - self.e2eIngestionComputation.iloc[i, 4]
             td = str(timeDiff).split(' ')[-1:][0]
-            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
-                '%H:%M:%S.%f')
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
             ftr = [3600, 60, 1]
             u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
             u = round(u, 2)
@@ -134,8 +157,16 @@ class JoinFiles:
         for i in range(len(self.e2eIngestionComputation)):
             timeDiff = self.e2eIngestionComputation.iloc[i, 7] - self.e2eIngestionComputation.iloc[i, 6]
             td = str(timeDiff).split(' ')[-1:][0]
-            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
-                '%H:%M:%S.%f')
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
             ftr = [3600, 60, 1]
             u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
             u = round(u, 2)
@@ -145,8 +176,16 @@ class JoinFiles:
         for i in range(len(self.e2eIngestionComputation)):
             timeDiff = self.e2eIngestionComputation.iloc[i, 11] - self.e2eIngestionComputation.iloc[i, 10]
             td = str(timeDiff).split(' ')[-1:][0]
-            timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
-                '%H:%M:%S.%f')
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S.%f').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
+            try:
+                timeDiff_calculation = datetime.strptime(str(td), '%H:%M:%S').strftime(
+                    '%H:%M:%S.%f')
+            except:
+                pass
             ftr = [3600, 60, 1]
             u = sum([a * b for a, b in zip(ftr, map(float, timeDiff_calculation.split(':')))])
             u = round(u, 2)
@@ -183,7 +222,7 @@ class JoinFiles:
                 ['INGESTION_ID', 'TYPE_OF_MESSAGE', 'CRNT_STATUS', 'INGESTION_SERVICE_MESSAGE_STARTED',
                  'INGESTION_SERVICE_MESSAGE_FINISHED', 'INGESTION SERVICE TOTAL TIME',
                  'MESSAGE_BROKER_STARTED', 'MESSAGE_BROKER_FINISHED', 'MESSAGE BROKER TOTAL TIME',
-                 'LCT_ADAPTER_STARTED', 'LCT_ADAPTER_FINISHED','LCT ADAPTER TOTAL TIME',
+                 'LCT_ADAPTER_STARTED', 'LCT_ADAPTER_FINISHED', 'LCT ADAPTER TOTAL TIME',
                  'MSG_STATUS', 'COMPUTATION_STARTED', 'COMPUTATION_FINISHED', 'COMPUTATION_STATUS',
                  'COMPUTATION TOTAL TIME',
                  'totalSourcingObjectCount', 'TimeDiff']].to_excel(
@@ -217,9 +256,9 @@ class JoinFiles:
 
     def exel_to_data_frama_Summary_e2e(self):
         self.e2eIngestionComputationSummary = self.e2eIngestionComputation.groupby(
-            ['TYPE_OF_MESSAGE', 'MSG_STATUS', 'COMPUTATION_STATUS']) \
+                ['TYPE_OF_MESSAGE', 'MSG_STATUS', 'COMPUTATION_STATUS']) \
             .agg(AVE_TIMEINGESTIONsec=('TimeDiff', 'mean'),
-                 TOTAL_OBJECT_COUNT=('totalSourcingObjectCount', 'sum'),
+                 TOTAL_OBJECT_COUNT=('totalSourcingObjectCount', sum),
                  TOTAL_OF_MESSAGE=('COMPUTATION_STATUS', 'count'),
                  INGESTION_SERVICE_MESSAGE_STARTED=('INGESTION_SERVICE_MESSAGE_STARTED', 'min'),
                  INGESTION_SERVICE_MESSAGE_FINISHED=('INGESTION_SERVICE_MESSAGE_FINISHED', 'max'),
@@ -229,6 +268,7 @@ class JoinFiles:
                  LCT_ADAPTER_FINISHED=('LCT_ADAPTER_FINISHED', 'max'),
                  COMPUTATION_STARTED=('COMPUTATION_STARTED', 'min'),
                  COMPUTATION_FINISHED=('COMPUTATION_FINISHED', 'max')).reset_index().round(2)
+        print(self.e2eIngestionComputationSummary['TOTAL_OBJECT_COUNT'])
         logger.info('JOIN SUMMARY INGESTION TO COMPUTATION !!')
 
     def creat_excel_file_summary(self):
